@@ -1,4 +1,3 @@
-
 #has tow mode [pkgName] [mode=summary]
 function package_installed() {
     which $1 &> /dev/null
@@ -176,15 +175,19 @@ function download_component() {
                 show_message "\033[1;36m$4\e[0m detected"
                 return 0
             else
-                show_message "md5 is not match"
+                show_message "md5 checksum is not match"
                 rm $1 
             fi
         else   
             show_message "downloading $4 ..."
             ariapkg=$(package_installed aria2c "summary")
             curlpkg=$(package_installed curl "summary")
+            gdownpkg=$(package_installed gdown "summary")
             
-            if [ "$ariapkg" == "true" ];then
+            if [ "$gdownpkg" == "true" ];then
+                show_message "using gdown to download $4"
+                gdown "$3" --continue --output "$1" 
+            elif [ "$ariapkg" == "true" ];then
                 show_message "using aria2c to download $4"
                 aria2c -c -x 8 -d "$CACHE_PATH" -o $4 $3
                 

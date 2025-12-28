@@ -1,3 +1,5 @@
+# This is the revived fork of [Gictorbit/photoshopCClinux](https://github.com/Gictorbit/photoshopCClinux)
+## Installer is properly tested on arch linux
 
 <div align="center" class="tip" markdown="1" style>
 
@@ -27,12 +29,18 @@ and sets some necessary components up for the best performance
 * `wine`
 * `wine64`
 * `winetricks`
+* `cabextract`
 * `md5sum`
+* `gdown`
+* `wine-mono`
+* `wine-gecko`
 
 
 if they are not already installed you can install them using your package manager for example in arch Linux
 ```bash
-sudo pacman -S wine winetricks
+sudo pacman -S wine winetricks mono cabextract
+pip3 install gdown
+yay -S wine-gecko wine-mono
 ``` 
 3- make sure you have enough storage in your `/home` partition about `5 GiB`
 > 1 GiB will be free after installation

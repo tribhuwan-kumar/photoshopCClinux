@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 source "sharedFuncs.sh"
 
+distro=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+
 function main() {
     
     mkdir -p $SCR_PATH
@@ -12,7 +14,9 @@ function main() {
 
     #make sure wine and winetricks package is already installed
     package_installed wine
-    package_installed wine64
+    if [ "$distro" != "arch" ]; then
+        package_installed wine64
+    fi
     package_installed md5sum
     package_installed winetricks
 
@@ -72,10 +76,11 @@ function main() {
 function replacement() {
     local filename="replacement.tgz"
     local filemd5="6441a8e77c082897a99c2b7b588c9ac4"
-    local filelink="https://victor.poshtiban.io/p/gictor/photoshopCC/replacement.tgz"
+    # URL: https://drive.google.com/file/d/1Y0SMEd0EiS6wCPWyw4KG3OGcO9IrDtpe/view?usp=sharing
+    local replacementTgzDriveId="1Y0SMEd0EiS6wCPWyw4KG3OGcO9IrDtpe"
     local filepath="$CACHE_PATH/$filename"
 
-    download_component $filepath $filemd5 $filelink $filename
+    download_component $filepath $filemd5 $replacementTgzDriveId $filename
 
     mkdir "$RESOURCES_PATH/replacement"
     show_message "extract replacement component..."
@@ -96,11 +101,12 @@ function replacement() {
 function install_photoshopSE() {
     local filename="photoshopCC-V19.1.6-2018x64.tgz"
     local filemd5="b63f6ed690343ee12b6195424f94c33f"
-    local filelink="https://victor.poshtiban.io/p/gictor/photoshopCC/photoshopCC-V19.1.6-2018x64.tgz"
-    # local filelink="http://127.0.0.1:8080/photoshopCC-V19.1.6-2018x64.tgz"
+    # URL: https://drive.google.com/file/d/1F4ZQjq7h_q6r1qPdeFDoKAD6YLnCoQEb/view?usp=sharing
+    local photoshopCCTgzDriveId="1F4ZQjq7h_q6r1qPdeFDoKAD6YLnCoQEb"
     local filepath="$CACHE_PATH/$filename"
 
-    download_component $filepath $filemd5 $filelink $filename
+    #parameters is [PATH] [CheckSum] [URL] [FILE NAME]
+    download_component $filepath $filemd5 $photoshopCCTgzDriveId $filename
 
     mkdir "$RESOURCES_PATH/photoshopCC"
     show_message "extract photoshop..."
@@ -110,7 +116,11 @@ function install_photoshopSE() {
     show_message "install photoshop..."
     show_message "\033[1;33mPlease don't change default Destination Folder\e[0m"
 
-    wine64 "$RESOURCES_PATH/photoshopCC/photoshop_cc.exe" &>> "$SCR_PATH/wine-error.log" || error "sorry something went wrong during photoshop installation"
+    if [ "$distro" != "arch" ]; then
+        wine64 "$RESOURCES_PATH/photoshopCC/photoshop_cc.exe" &>> "$SCR_PATH/wine-error.log" || error "sorry something went wrong during photoshop installation"
+    else 
+        wine "$RESOURCES_PATH/photoshopCC/photoshop_cc.exe" &>> "$SCR_PATH/wine-error.log" || error "sorry something went wrong during photoshop installation"
+    fi
     
     show_message "removing useless helper.exe plugin to avoid errors"
     rm "$WINE_PREFIX/drive_c/users/$USER/PhotoshopSE/Required/Plug-ins/Spaces/Adobe Spaces Helper.exe"

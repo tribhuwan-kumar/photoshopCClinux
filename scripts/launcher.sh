@@ -14,5 +14,10 @@ WINE_PREFIX="$SCR_PATH/prefix"
  
 
 export WINEPREFIX="$WINE_PREFIX"
+distro=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
 
-wine64 "$SCR_PATH/prefix/drive_c/users/$USER/PhotoshopSE/Photoshop.exe"
+if [ "$distro" != "arch" ]; then
+    wine64 "$SCR_PATH/prefix/drive_c/users/$USER/PhotoshopSE/Photoshop.exe"
+else
+    wine "$SCR_PATH/prefix/drive_c/users/$USER/PhotoshopSE/Photoshop.exe"
+fi
